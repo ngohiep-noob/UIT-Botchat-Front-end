@@ -7,8 +7,7 @@ const canvasImgCrop = img.getContext("2d");
 const fpsControl = new FPS();
 const stopBtn = document.getElementById("stop-btn");
 const mainBox = document.getElementById("main-box");
-const ACCESS_TOKEN =
-  "ya29.A0AVA9y1tYUkqA9JJ-Hd_I6ndXE5mQQkXWNSBO-yHXUAP8cpvG4netBlkaDenubJyBLlqQI_msUXPLuvaX2M_CPzhyUcArNyuA8CQ1XOP-lOCxGRtXZhO1k18iNEEXOpG1xv7hKn3uFcvUHPo-MURH3pR_aaxNYUNnWUtBVEFTQVRBU0ZRRTY1ZHI4bjRiOW9mbGlaWWhxbVFacHJsaEx0QQ0163";
+
 const spinner = document.querySelector(".loading");
 spinner.ontransitionend = () => {
   spinner.style.display = "none";
@@ -86,7 +85,7 @@ async function onResultsFace(results) {
       formData.append("id", id);
       
       for(let i in files) {  
-        const res = await UploadImage(files[i], id + " - " + files[i].name)
+        const res = await UploadImage(files[i], id + "_" + files[i].name)
         if(res) {
           formData.append('img_link', 'https://drive.google.com/uc?id=' + res.id)
         }
@@ -159,6 +158,7 @@ new ControlPanel(controlsElement1, {
 // TODO(developer): Set to client ID and API key from the Developer Console
 const CLIENT_ID =
   "820301224887-c72qonm394gunrrdt9n3u3kcmii9t3rt.apps.googleusercontent.com";
+const CLIENT_SECRET = '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'
 const API_KEY = "AIzaSyB3SyqrMdcaLWA1aWHcI6kMQRTa4N7N6Yo";
 
 // Discovery doc URL for APIs used by the quickstart
@@ -168,6 +168,10 @@ const DISCOVERY_DOC =
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 const SCOPES = "https://www.googleapis.com/auth/drive";
+
+let ACCESS_TOKEN = "";
+
+const REFRESH_TOKEN = '1//04W8LGfnVnOWrCgYIARAAGAQSNwF-L9IrhK88uQALSHRDRZCIyMD3C52or3Qnj_ju3fOheaByYi1Kl9ohTlG5refWP1Ggv_oPomo'
 
 let tokenClient;
 
@@ -188,11 +192,15 @@ async function intializeGapiClient() {
       apiKey: API_KEY,
       discoveryDocs: [DISCOVERY_DOC],
     })
-    .then(() => {
+    .then(async() => {
       console.log("API client initialized successfully");
+
+      ACCESS_TOKEN = await RefreshToken(REFRESH_TOKEN)
+
       gapi.client.setToken({
         access_token: ACCESS_TOKEN
       });
+
       FindParentFolder()
     })
     .catch((err) => {
@@ -209,7 +217,6 @@ function gisLoaded() {
     scope: SCOPES,
     callback: "", // defined later
   });
-  console.log(google.accounts.oauth2)
 }
 
 async function FindParentFolder() {
@@ -225,14 +232,9 @@ async function FindParentFolder() {
   }
   const files = response.result.files;
   if (!files || files.length == 0) {
-    alert("No files found.");
+    alert("No folder found.");
     return;
   }
-  // Flatten to string to display
-  const output = files.reduce(
-    (str, file) => `${str}${file.name} (${file.id})\n`,
-    "Files:\n"
-  );
   console.log(files);
   localStorage.setItem("parent_folder", files[0].id);
 }
@@ -240,8 +242,8 @@ async function FindParentFolder() {
 async function UploadImage(file, imgName) {
   // get parent folder id from localstorage
   const parentFolder = localStorage.getItem("parent_folder");
-  // set file metadata
 
+  // set file metadata
   var metadata = {
     name: imgName,
     mimeType: file.type,
@@ -266,3 +268,37 @@ async function UploadImage(file, imgName) {
   )
   return await res.json()
 }
+
+async function RefreshToken(refresh_token) {
+  const body = {
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    refresh_token: refresh_token,
+    grant_type: "refresh_token"
+  }
+
+  let formBody = [];
+  for (const property in body) {
+    const encodedKey = encodeURIComponent(property);
+    const encodedValue = encodeURIComponent(body[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+
+  try {
+    const resp = await fetch('https://www.googleapis.com/oauth2/v4/token',
+    {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }),
+      body: formBody
+    })
+    let result = await resp.json()
+    return result.access_token
+  } catch (error) {
+    console.error('refresh token failed: ', error)
+    return undefined
+  }
+}
+
