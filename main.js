@@ -8,27 +8,17 @@ const fpsControl = new FPS();
 const stopBtn = document.getElementById("stop-btn");
 const mainBox = document.getElementById("main-box");
 
-const spinner = document.querySelector(".loading");
-spinner.ontransitionend = () => {
-  spinner.style.display = "none";
-};
-
-function dataURLtoFile(dataurl, filename) {
-  var arr = dataurl.split(","),
-    mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]),
-    n = bstr.length,
-    u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-
-  return new File([u8arr], filename, { type: mime });
-}
+/**
+ * Call api to verify user
+ * - if user verification is correct -> show user information
+ * - if user verification is not correct
+ *    -> ask user id
+ *    -> upload to gg drive and call api register
+ */
 
 let state = 1; // 0 - waiting, 1 - ready
 let time = 0;
-let files = []
+let files = [];
 async function onResultsFace(results) {
   document.body.classList.add("loaded");
   fpsControl.tick();
@@ -57,10 +47,8 @@ async function onResultsFace(results) {
     if (time < 3) {
       if (state != 0) {
         state = 0;
+        ShowSpinner();
         setTimeout(() => {
-          // const imgBase64 = img
-          //         .toDataURL("image/jpeg")
-          //         .replace(/^data:image\/jpeg;base64,/, "");
           canvasImgCrop.drawImage(
             results.image,
             sx - sWidth / 2 - 30,
@@ -74,38 +62,31 @@ async function onResultsFace(results) {
           );
 
           let file = dataURLtoFile(img.toDataURL("image/jpeg"), `${time}.jpg`);
-          files.push(file)
+          IMAGES.push(file)
           state = 1;
           time++;
         }, 2000);
       }
     } else {
-      var id = prompt("Enter your id: ")
-      let formData = new FormData();
-      formData.append("id", id);
+      HideSpinner();
+      /**
+       * Call api to verify
+       * http response: 3 student: {
+       *  id: string,
+       *  name: string,
+       * }
+       */
+      const resp = [
+        { id: 21520846, name: "ngo hiep1" },
+        { id: 21520847, name: "ngo hiep2" },
+        { id: 21520848, name: "ngo hiep3" }
+      ];
+      RenderUserPrediction(resp);
+      TriggerModal('Xin chào!');
       
-      for(let i in files) {  
-        const res = await UploadImage(files[i], id + "_" + files[i].name)
-        if(res) {
-          formData.append('img_link', 'https://drive.google.com/uc?id=' + res.id)
-        }
-        console.log(res)
-      }
-
-      const upload_resp = await axios.post(
-        "http://localhost:5000/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          }
-        }
-      );
-      console.log(upload_resp)
-
       faceDetection.onResults(() => {
-        console.log('finished face detection!')
-      })
+        console.log("finished face detection!");
+      });
     }
   }
   canvasOut1.restore();
@@ -150,15 +131,10 @@ new ControlPanel(controlsElement1, {
 
 // google drive configuaration
 
-/* exported gapiLoaded */
-/* exported gisLoaded */
-/* exported handleAuthClick */
-/* exported handleSignoutClick */
-
 // TODO(developer): Set to client ID and API key from the Developer Console
 const CLIENT_ID =
   "820301224887-c72qonm394gunrrdt9n3u3kcmii9t3rt.apps.googleusercontent.com";
-const CLIENT_SECRET = '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'
+const CLIENT_SECRET = "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";
 const API_KEY = "AIzaSyB3SyqrMdcaLWA1aWHcI6kMQRTa4N7N6Yo";
 
 // Discovery doc URL for APIs used by the quickstart
@@ -171,7 +147,8 @@ const SCOPES = "https://www.googleapis.com/auth/drive";
 
 let ACCESS_TOKEN = "";
 
-const REFRESH_TOKEN = '1//04W8LGfnVnOWrCgYIARAAGAQSNwF-L9IrhK88uQALSHRDRZCIyMD3C52or3Qnj_ju3fOheaByYi1Kl9ohTlG5refWP1Ggv_oPomo'
+const REFRESH_TOKEN =
+  "1//04W8LGfnVnOWrCgYIARAAGAQSNwF-L9IrhK88uQALSHRDRZCIyMD3C52or3Qnj_ju3fOheaByYi1Kl9ohTlG5refWP1Ggv_oPomo";
 
 let tokenClient;
 
@@ -192,16 +169,20 @@ async function intializeGapiClient() {
       apiKey: API_KEY,
       discoveryDocs: [DISCOVERY_DOC],
     })
-    .then(async() => {
+    .then(async () => {
       console.log("API client initialized successfully");
 
-      ACCESS_TOKEN = await RefreshToken(REFRESH_TOKEN)
+      ACCESS_TOKEN = await RefreshToken(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        REFRESH_TOKEN
+      );
 
       gapi.client.setToken({
-        access_token: ACCESS_TOKEN
+        access_token: ACCESS_TOKEN,
       });
 
-      FindParentFolder()
+      FindParentFolder();
     })
     .catch((err) => {
       console.error(err);
@@ -219,86 +200,6 @@ function gisLoaded() {
   });
 }
 
-async function FindParentFolder() {
-  let response;
-  try {
-    // console.log(gapi.client.drive)
-    response = await gapi.client.drive.files.list({
-      q: 'name = "BotChat Image"',
-    });
-  } catch (err) {
-    console.error(err);
-    return;
-  }
-  const files = response.result.files;
-  if (!files || files.length == 0) {
-    alert("No folder found.");
-    return;
-  }
-  console.log(files);
-  localStorage.setItem("parent_folder", files[0].id);
-}
-
-async function UploadImage(file, imgName) {
-  // get parent folder id from localstorage
-  const parentFolder = localStorage.getItem("parent_folder");
-
-  // set file metadata
-  var metadata = {
-    name: imgName,
-    mimeType: file.type,
-    parents: [parentFolder],
-  };
-  var fd = new FormData();
-  fd.append(
-    "metadata",
-    new Blob([JSON.stringify(metadata)], { type: "application/json" })
-  );
-  fd.append("file", file);
-
-  let res =  await fetch(
-    "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
-    {
-      method: "POST",
-      headers: new Headers({
-        Authorization: "Bearer " + ACCESS_TOKEN,
-      }),
-      body: fd,
-    }
-  )
-  return await res.json()
-}
-
-async function RefreshToken(refresh_token) {
-  const body = {
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-    refresh_token: refresh_token,
-    grant_type: "refresh_token"
-  }
-
-  let formBody = [];
-  for (const property in body) {
-    const encodedKey = encodeURIComponent(property);
-    const encodedValue = encodeURIComponent(body[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-
-  try {
-    const resp = await fetch('https://www.googleapis.com/oauth2/v4/token',
-    {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      }),
-      body: formBody
-    })
-    let result = await resp.json()
-    return result.access_token
-  } catch (error) {
-    console.error('refresh token failed: ', error)
-    return undefined
-  }
-}
-
+setInterval(async () => {
+  ACCESS_TOKEN = await RefreshToken(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN);
+}, 35000);
