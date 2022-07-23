@@ -32,7 +32,7 @@
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.0/face_detection.js"
+      src="./mediapipe/face_detection.js"
       crossorigin="anonymous"
     ></script>
     <script
@@ -60,7 +60,7 @@
         </div>
 
         <!-- MEDIAPIPE OUTPUT -->
-        <div class="col" style="display: none">
+        <div class="col" style="display: block">
           <article class="panel is-info">
             <p class="panel-heading">Face Detection</p>
             <div class="panel-block">
@@ -86,7 +86,6 @@
       class="modal fade"
       id="modal-panel"
       tabindex="-1"
-      aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
       <div class="modal-dialog">
@@ -100,22 +99,45 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body">
-            <!-- <div class="list-group" id="user-prediction">
-              <button type="button" class="list-group-item active text-center h3" aria-current="true" disabled>
-                What's your name?
-              </button>
-              <button type="button" class="list-group-item list-group-item-action">A second button item</button>
-              <button type="button" class="list-group-item list-group-item-action">A third button item</button>
-              <button type="button" class="list-group-item list-group-item-action">A fourth button item</button>
-              <button type="button" class="list-group-item list-group-item-action">I can't my name</button>
-            </div> -->
-          </div>
+          <div class="modal-body" id="greeting-modal-body"></div>
           <div class="modal-footer">
             <button
               type="button"
               class="btn btn-danger"
               data-bs-dismiss="modal"
+              id="close-modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="info-modal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <p class="modal-title display-5" id="exampleModalLabel">Hello</p>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id='info-modal-body'></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+              id="close-modal"
             >
               Close
             </button>
@@ -147,7 +169,7 @@
       </div>
     </div>
 
-    <script src="./JSEvent.js"></script>
+    <script src="./Global-Event.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script
       async

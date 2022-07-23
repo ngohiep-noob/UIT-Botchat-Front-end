@@ -16,15 +16,23 @@ const mainBox = document.getElementById("main-box");
  *    -> upload to gg drive and call api register
  */
 
+function stopDetect() {
+  faceDetection.onResults(() => {
+    //console.log("finished face detection!");
+  });
+}
+
+function runDetect() {
+  faceDetection.onResults(onResultsFace)
+}
+
 let state = 1; // 0 - waiting, 1 - ready
-let time = 0;
-let files = [];
+
 async function onResultsFace(results) {
-  document.body.classList.add("loaded");
   fpsControl.tick();
-  // canvasOut1.save();
-  // canvasOut1.clearRect(0, 0, out1.width, out1.height);
-  // canvasOut1.drawImage(results.image, 0, 0, out1.width, out1.height);
+  canvasOut1.save();
+  canvasOut1.clearRect(0, 0, out1.width, out1.height);
+  canvasOut1.drawImage(results.image, 0, 0, out1.width, out1.height);
 
   if (results.detections.length > 0) {
     const size = 480;
@@ -32,61 +40,80 @@ async function onResultsFace(results) {
     const sWidth = results.detections[0].boundingBox["width"] * size;
     const sx = results.detections[0].boundingBox["xCenter"] * size;
     const sy = results.detections[0].boundingBox["yCenter"] * size;
+    // console.log('height: ' + sHeight,'width: ' +  sWidth, 'sx: ' + sx, 'sy: ' + sy)
 
-    // drawRectangle(canvasOut1, results.detections[0].boundingBox, {
-    //   color: "green",
-    //   lineWidth: 4,
-    //   fillColor: "#00000000",
-    // });
+    drawRectangle(canvasOut1, results.detections[0].boundingBox, {
+      color: "green",
+      lineWidth: 4,
+      fillColor: "#00000000",
+    });
 
-    // drawLandmarks(canvasOut1, results.detections[0].landmarks, {
-    //   color: "white",
-    //   radius: 5,
-    // });
+    drawLandmarks(canvasOut1, results.detections[0].landmarks, {
+      color: "white",
+      radius: 5,
+    });
+    /**
+     * user face need to be close and there aren't any process running
+     */
+    if(!PROCESSING && sHeight > 160 && sWidth > 160) {
+      if(IMAGES.length < NUMBER_OF_IMAGES) {
+        if (state != 0) {
+          state = 0;
+          ShowSpinner();
+          setTimeout(() => {
+            canvasImgCrop.drawImage(
+              results.image,
+              sx - sWidth / 2 - 30,
+              sy - sHeight / 2 - 70,
+              sWidth + 70,
+              sHeight + 80,
+              0,
+              0,
+              img.width,
+              img.height
+            );
 
-    if (time < 3) {
-      if (state != 0) {
-        state = 0;
-        ShowSpinner();
-        setTimeout(() => {
-          canvasImgCrop.drawImage(
-            results.image,
-            sx - sWidth / 2 - 30,
-            sy - sHeight / 2 - 70,
-            sWidth + 70,
-            sHeight + 80,
-            0,
-            0,
-            img.width,
-            img.height
-          );
+            let file = dataURLtoFile(img.toDataURL("image/jpeg"), `${IMAGES.length}.jpeg`);
+            AddImageToList(file)
+            state = 1;
+          }, 2000);
+          // HideSpinner();
+        }
+      } else {
+        PROCESSING = true;
+        
+        /**
+         * Call api to verify
+         * http response: 3 student: {
+         *  id: string,
+         *  name: string,
+         * }
+         */
+        ShowToast('Notifications', 'Đang nhận diện gương mặt!');
+        let resp = await HandleRecognize();
+        HideSpinner();
 
-          let file = dataURLtoFile(img.toDataURL("image/jpeg"), `${time}.jpg`);
-          IMAGES.push(file)
-          state = 1;
-          time++;
-        }, 2000);
+        let userList = resp.reduce((preList, u) => {
+          const name_id = u.subject.split('_')
+          return [
+            ...preList,
+            {
+              id: name_id[1],
+              name: name_id[0]
+            }
+          ]
+        }, [])
+        
+        console.log('Prediction: ',userList)
+
+        RenderUserPrediction(userList);
+        ShowModal(modalGreetingTrigger, 'Xin chào!');
       }
-    } else {
-      HideSpinner();
-      /**
-       * Call api to verify
-       * http response: 3 student: {
-       *  id: string,
-       *  name: string,
-       * }
-       */
-      const resp = [
-        { id: 21520846, name: "ngo hiep1" },
-        { id: 21520847, name: "ngo hiep2" },
-        { id: 21520848, name: "ngo hiep3" }
-      ];
-      RenderUserPrediction(resp);
-      TriggerModal('Xin chào!');
-      
-      faceDetection.onResults(() => {
-        console.log("finished face detection!");
-      });
+    } else if(PROCESSING) {
+      console.log('in process!')
+    } else if(sHeight > 110 && sWidth > 110){ 
+      if(IMAGES.length < 3)
+      ShowToast('Notification', 'Hãy lại gần camera!')
     }
   }
   canvasOut1.restore();
@@ -98,7 +125,7 @@ const faceDetection = new FaceDetection({
   },
 });
 
-faceDetection.onResults(onResultsFace);
+runDetect();
 
 const camera = new Camera(video1, {
   onFrame: async () => {
@@ -131,7 +158,6 @@ new ControlPanel(controlsElement1, {
 
 // google drive configuaration
 
-// TODO(developer): Set to client ID and API key from the Developer Console
 const CLIENT_ID =
   "820301224887-c72qonm394gunrrdt9n3u3kcmii9t3rt.apps.googleusercontent.com";
 const CLIENT_SECRET = "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";
