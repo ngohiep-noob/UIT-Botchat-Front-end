@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "axios": "^0.27.2",
+    "express": "^4.18.1",
+    "md5": "^2.3.0",
+    "nodemon": "^2.0.19"
+  },
+  "name": "face-dectection-mockup",
+  "version": "1.0.0",
+  "main": "test_call.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngohiep-nood/UIT-Botchat-Font-end.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngohiep-nood/UIT-Botchat-Font-end/issues"
+  },
+  "homepage": "https://github.com/ngohiep-nood/UIT-Botchat-Font-end#readme",
+  "description": ""
+}
