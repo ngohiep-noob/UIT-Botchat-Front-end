@@ -108,7 +108,7 @@ async function AddSubjectExample(files, subjectName) {
   };
 
   const res = await axios.post(
-    `http://${HOST_NAME}/api/v1/recognition/faces?subject=${subjectName}`,
+    `${HOST_NAME}/api/v1/recognition/faces?subject=${subjectName}`,
     formData,
     requestOptions
   );
@@ -173,7 +173,7 @@ async function HandleRecognize() {
   };
 
   const res = await axios.post(
-    `http://${HOST_NAME}/api/v1/recognition/recognize?prediction_count=3&limit=1`,
+    `${HOST_NAME}/api/v1/recognition/recognize?prediction_count=3&limit=1`,
     formdata,
     requestOptions
   );
