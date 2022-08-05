@@ -34,4 +34,4 @@
 1. Clone source code: `git clone https://github.com/ngohiep-nood/UIT-Botchat-Font-end.git`
 2. Cài đặt packages: `npm install`
 3. Chạy project: `npm run dev`
-4. Vào `http://localhost:3000`
+4. Vào `http://localhost:3000` (lưu ý sử dụng chrome cho website)
