@@ -54,7 +54,6 @@ function RenderTable() {
     .then((res) => res.json())
     .then((res) => {
       let data = res.data;
-
       const schedule = {
         2: [],
         3: [],
@@ -63,13 +62,16 @@ function RenderTable() {
         6: [],
         7: [],
       };
-
       data.forEach((e) => schedule[e.thu].push(e));
       console.log(schedule);
       RenderSchedule(schedule);
     });
 }
 
+const emptyTable = document.querySelector('.modal-body-time-table').innerHTML
+
 document.getElementById("toggle-modal").addEventListener("click", () => {
+  let modalBody = document.querySelector('.modal-body-time-table') 
+  modalBody.innerHTML = emptyTable;
   RenderTable();
 });

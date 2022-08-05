@@ -1,7 +1,8 @@
 const modalGreeting = document.querySelector("#modal-panel");
 let modalGreetingTrigger = new bootstrap.Modal(modalGreeting);
-const modalInfo = document.querySelector('#info-modal')
-let modalInfoTrigger = new bootstrap.Modal(modalInfo)
+const modalTimeTab = document.querySelector('#time-table-modal')
+let modalTimeTabTrigger = new bootstrap.Modal(modalTimeTab)
+
 const spinnerLoading = document.querySelector("#backdrop");
 const toastLive = document.getElementById("liveToast");
 const toast = new bootstrap.Toast(toastLive);
@@ -15,8 +16,9 @@ var NUMBER_OF_IMAGES = 1;
 var NEW_ID = '';
 var NEW_NAME = ''
 var CANCEL_GREETING_MODAL = true;
-var CANCEL_INFO_MODAL = true;
+var CANCEL_TIME_TAB_MODAL = true;
 var HOST_NAME = 'http://localhost:8000'
+const emptyTable = document.querySelector('.modal-body-time-table').innerHTML
 
 function ClearImageList(processing = false) {
   console.log('clear images')
@@ -52,6 +54,19 @@ function ResetSessionInTime(sec = 5) {
   }, sec * 1000)
 }
 
+function ResetTimeTable() {
+  let timeTabModalBody = document.querySelector('.modal-body-time-table');
+  timeTabModalBody.innerHTML = emptyTable;
+}
+
+modalTimeTab.addEventListener('hidden.bs.modal', () => {
+  ResetTimeTable();
+  if(CANCEL_TIME_TAB_MODAL) {
+    ResetSessionInTime(5);
+  }
+  CANCEL_TIME_TAB_MODAL = true
+})
+
 modalGreeting.addEventListener('hidden.bs.modal', (event) => {
   // console.log(CANCEL_GREETING_MODAL)
   MODAL_GREETING_BODY.innerHTML = '';
@@ -59,14 +74,6 @@ modalGreeting.addEventListener('hidden.bs.modal', (event) => {
     ResetSessionInTime(5);
   }
   CANCEL_GREETING_MODAL = true;
-})
-
-modalInfo.addEventListener('hidden.bs.modal', (e) => {
-  MODAL_INFO_BODY.innerHTML = '';
-  if(CANCEL_INFO_MODAL) {
-    ResetSessionInTime(5);
-  }
-  CANCEL_INFO_MODAL = true
 })
 
 function ShowSpinner() {
@@ -98,3 +105,11 @@ function ActionWithDelay(callback, time = 5000) {
   setTimeout(callback, time)
 }
 
+const newElement = (nameTag, innerText = "", Attributes = {}) => {
+  let newElem = document.createElement(nameTag);
+  for (const key in Attributes) {
+    newElem.setAttribute(key, Attributes[key]);
+  }
+  newElem.innerText = innerText;
+  return newElem;
+};

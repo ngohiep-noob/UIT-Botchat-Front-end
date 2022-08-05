@@ -1,87 +1,3 @@
-//#region google service
-async function UploadImageToGGDrive(file, filename) {
-  // get parent folder id from localstorage
-  const parentFolder = localStorage.getItem("parent_folder");
-
-  // set file metadata
-  var metadata = {
-    name: filename,
-    mimeType: file.type,
-    parents: [parentFolder],
-  };
-  var fd = new FormData();
-  fd.append(
-    "metadata",
-    new Blob([JSON.stringify(metadata)], { type: "application/json" })
-  );
-  fd.append("file", file);
-
-  let res = await fetch(
-    "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
-    {
-      method: "POST",
-      headers: new Headers({
-        Authorization: "Bearer " + ACCESS_TOKEN,
-      }),
-      body: fd,
-    }
-  );
-  return await res.json();
-}
-
-async function RefreshToken(ClientID, ClientSecret, refresh_token) {
-  const body = {
-    client_id: ClientID,
-    client_secret: ClientSecret,
-    refresh_token: refresh_token,
-    grant_type: "refresh_token",
-  };
-
-  let formBody = [];
-  for (const property in body) {
-    const encodedKey = encodeURIComponent(property);
-    const encodedValue = encodeURIComponent(body[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-
-  try {
-    const resp = await fetch("https://www.googleapis.com/oauth2/v4/token", {
-      method: "POST",
-      headers: new Headers({
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      }),
-      body: formBody,
-    });
-    let result = await resp.json();
-    return result.access_token;
-  } catch (error) {
-    console.error("refresh token failed: ", error);
-    return undefined;
-  }
-}
-
-async function FindParentFolder() {
-  let response;
-  try {
-    // console.log(gapi.client.drive)
-    response = await gapi.client.drive.files.list({
-      q: 'name = "BotChat Image"',
-    });
-  } catch (err) {
-    console.error(err);
-    return;
-  }
-  const files = response.result.files;
-  if (!files || files.length == 0) {
-    alert("No folder found.");
-    return;
-  }
-  console.log(files);
-  localStorage.setItem("parent_folder", files[0].id);
-}
-//#endregion
-
 function dataURLtoFile(dataurl, filename) {
   var arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)[1],
@@ -161,35 +77,6 @@ async function AddSubjectExample(images, subjectName) {
 
 async function HandleRegister(userInfo, images) {
   let { id, name } = userInfo;
-
-  //#region For google drive
-  // let formData = new FormData();
-  // formData.append("id", id);
-  // formData.append('username', name)
-
-  // // upload images to google drive
-  // for (let i in images) {
-  //   const res = await UploadImageToGGDrive(images[i], name + "_" + id + '.jpeg');
-  //   if (res) {
-  //     formData.append("img_link", "https://drive.google.com/uc?id=" + res.id);
-  //   }
-  //   console.log(res);
-  // }
-
-  // store student id and image urls
-  // const upload_resp = await axios.post(
-  //   "http://localhost:5000/upload",
-  //   formData,
-  //   {
-  //     headers: {
-  //       "Content-Type": "multipart/form-data",
-  //     },
-  //   }
-  // );
-
-  // return upload_resp.data;
-  //#endregion
-
   const subjectName = name + "_" + id;
   const res = await AddSubjectExample(images, subjectName);
   console.log("Trainning: ", res);
@@ -310,10 +197,7 @@ async function HandleMakeNewFriendClick(event) {
 
   let modalFooter = document.querySelectorAll(".modal-footer")[1];
   submitBtn.addEventListener("click", async () => {
-    /**
-     * Submit user id and 3 images(upload to GG drive)
-     */
-    CANCEL_INFO_MODAL = false;
+    CANCEL_TIME_TAB_MODAL = false;
     if (IMAGES.length == NUMBER_OF_IMAGES && NEW_ID && NEW_NAME) {
       ShowSpinner();
       modalFooter.removeChild(modalFooter.firstChild);
@@ -323,7 +207,7 @@ async function HandleMakeNewFriendClick(event) {
         if (res.status === "success") {
           ShowToast("Notification", "Đã làm quen bạn mới, Hãy thử lại!");
         } else {
-          ShowToast("Notification", "Có lỗi xảy ra!");
+          ShowToast("Notification", "Có lỗi xảy ra!", false,'error');
         }
 
         ActionWithDelay(() => {
@@ -344,51 +228,99 @@ async function HandleMakeNewFriendClick(event) {
   modalFooter.insertBefore(submitBtn, modalFooter.firstChild);
 }
 
+
+function AddEmptyCellInCol(tabRows, beg, end) {
+  for (let i = beg; i <= end; i++) {
+    const empCell = document.createElement("td");
+    tabRows[i].appendChild(empCell);
+  }
+}
+
+function RenderSchedule(schedule) {
+  let tabRows = document.querySelectorAll(".tiethoc");
+  for (const day in schedule) {
+    // loop day by day
+    const data = schedule[day];
+
+    if (data.length === 0) {
+      AddEmptyCellInCol(tabRows, 0, 9);
+    } else {
+      let emptyIndex = 0;
+      for (const lesson of data) {
+        // every lesson in a day
+        const { tiet, online, phonghoc, dadk, ngonngu, malop} = lesson;
+        
+        const tietBD = Number(tiet.split("-")[0]) - 1,
+          tietKT = Number(tiet.split("-")[1]) - 1;
+
+        AddEmptyCellInCol(tabRows, emptyIndex, tietBD - 1);
+        let beginCell = document.createElement("td");
+        beginCell.className = "text-center table-active border-white align-middle";
+        beginCell.setAttribute("rowspan", tietKT - tietBD + 1);
+        [
+            newElement('h6', `${malop} - ${ngonngu}`),
+            newElement('p', `Phòng học: ${phonghoc}`),
+            newElement('p', `Sỉ số: ${dadk}`),
+            newElement('p', `Hình thức: ${online === '1' ? 'online' : 'offline'}`),
+        ].forEach(child => beginCell.appendChild(child));
+        tabRows[tietBD].appendChild(beginCell);
+        emptyIndex = tietKT + 1;
+      }
+
+      AddEmptyCellInCol(tabRows, emptyIndex, 9); // add space until the last period in day
+    }
+  }
+}
+
+async function GetTimeTable(id) {
+  // call api to get table time
+  const body = {
+    id, 
+    hocky: 3,
+    namhoc: 2021
+  }
+  ShowSpinner();
+  fetch(`http://localhost:3000/time-table`, {
+    method: "POST",
+    headers: {
+      "Content-Type" : "application/json"
+    }, 
+    body: JSON.stringify(body)
+  })
+  .then(res => res.json())
+  .then(res => {
+    const data = res.data;
+    console.log(res)
+    const schedule = {
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: [],
+      7: [],
+    };
+    data.forEach((e) => schedule[e.thu].push(e));
+    console.log('schedule', schedule)
+    RenderSchedule(schedule);
+    HideSpinner();
+    modalTimeTabTrigger.show();
+  })
+  .catch(err => {
+    console.error(err);
+    ResetTimeTable();
+    HideSpinner();
+    modalTimeTabTrigger.show();
+  })
+
+}
+
 async function HandleGetUserInfoClick(event) {
   event.preventDefault();
   id = event.target.id;
   /**
-   * Call api to get user detail information
+   * Call api to get and render user detail information
    */
-  ShowSpinner();
-  MODAL_INFO_BODY.innerHTML = "";
-  const resp = `<table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
-        </tbody>
-      </table>`;
-
-  ActionWithDelay(() => {
-    HideSpinner();
-  }, 1000);
-
-  ActionWithDelay(() => {
-    ShowModal(modalInfoTrigger, "Thông tin của bạn", resp);
-  }, 1000);
+  GetTimeTable(id);
 }
 
 function RenderUserPrediction(info) {

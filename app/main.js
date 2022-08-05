@@ -162,76 +162,8 @@ new ControlPanel(controlsElement1, {
     faceDetection.setOptions(options);
   });
 
-// google drive configuaration
 
-const CLIENT_ID =
-  "820301224887-c72qonm394gunrrdt9n3u3kcmii9t3rt.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
-const API_KEY = "AIzaSyB3SyqrMdcaLWA1aWHcI6kMQRTa4N7N6Yo";
 
-// Discovery doc URL for APIs used by the quickstart
-const DISCOVERY_DOC =
-  "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest";
 
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-const SCOPES = "https://www.googleapis.com/auth/drive";
 
-let ACCESS_TOKEN = "";
 
-const REFRESH_TOKEN =
-  "1//04W8LGfnVnOWrCgYIARAAGAQSNwF-L9IrhK88uQALSHRDRZCIyMD3C52or3Qnj_ju3fOheaByYi1Kl9ohTlG5refWP1Ggv_oPomo";
-
-let tokenClient;
-
-/**
- * Callback after api.js is loaded.
- */
-function gapiLoaded() {
-  gapi.load("client", intializeGapiClient);
-}
-
-/**
- * Callback after the API client is loaded. Loads the
- * discovery doc to initialize the API.
- */
-async function intializeGapiClient() {
-  gapi.client
-    .init({
-      apiKey: API_KEY,
-      discoveryDocs: [DISCOVERY_DOC],
-    })
-    .then(async () => {
-      console.log("API client initialized successfully");
-
-      ACCESS_TOKEN = await RefreshToken(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        REFRESH_TOKEN
-      );
-
-      gapi.client.setToken({
-        access_token: ACCESS_TOKEN,
-      });
-
-      FindParentFolder();
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-}
-
-/**
- * Callback after Google Identity Services are loaded.
- */
-function gisLoaded() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: "", // defined later
-  });
-}
-
-// setInterval(async () => {
-//   ACCESS_TOKEN = await RefreshToken(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN);
-// }, 35000);

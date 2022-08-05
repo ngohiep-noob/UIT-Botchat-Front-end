@@ -43,7 +43,8 @@
     ></script>
     <link rel="stylesheet" href="style.css" />
     <script src="./service.js"></script>
-    <title>🤖 UITA - Verify Student</title>
+    <title>UITA - Verify Student</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.png">
   </head>
 
   <body>
@@ -169,19 +170,118 @@
       </div>
     </div>
 
+    <!-- time table modal -->
+    <div
+      class="modal fade"
+      id="time-table-modal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <p class="modal-title display-5" id="exampleModalLabel">Thời khóa biểu</p>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body-time-table">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col" class="text-center table-light">#</th>
+                  <th scope="col" class="text-center table-info">Thứ 2</th>
+                  <th scope="col" class="text-center table-info">Thứ 3</th>
+                  <th scope="col" class="text-center table-info">Thứ 4</th>
+                  <th scope="col" class="text-center table-info">Thứ 5</th>
+                  <th scope="col" class="text-center table-info">Thứ 6</th>
+                  <th scope="col" class="text-center table-info">Thứ 7</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-body">
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 1<br />(7:30 - 8:15)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 2<br />(8:15 - 9:00)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 3<br />(9:00 - 9:45)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 4<br />(10:00 - 10:45)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 5<br />(10:45 - 11:30)
+                  </th>
+                </tr>
+                <tr>
+                  <th></th>
+                </tr>
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 6<br />(13:00 - 13:45)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 7<br />(13:45 - 14:30)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 8<br />(14:30-15:15)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 9<br />(15:30-16:15)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 10<br />(16:15-17:00)
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="./Global-Event.js"></script>
     <script type="text/javascript" src="main.js"></script>
-    <!-- <script
-      async
-      defer
-      src="https://apis.google.com/js/api.js"
-      onload="gapiLoaded()"
-    ></script>
-    <script
-      async
-      defer
-      src="https://accounts.google.com/gsi/client"
-      onload="gisLoaded()"
-    ></script> -->
   </body>
 </html>

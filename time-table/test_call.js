@@ -4,7 +4,7 @@ var fs = require('fs')
 
 var key = "IL@_};uE7<hdJ!";
 var uid = '21520652' //21520846
-var date = + new Date(2022, 4, 5)
+var date = Date.now()
 let hashStr = md5(uid + date + key)
 
 var data = JSON.stringify({
