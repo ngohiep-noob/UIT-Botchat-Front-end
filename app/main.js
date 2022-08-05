@@ -35,7 +35,7 @@ async function onResultsFace(results) {
   canvasOut1.drawImage(results.image, 0, 0, out1.width, out1.height);
 
   if (results.detections.length > 0) {
-    const size = 480;
+    const size = out1.height;
     const sHeight = results.detections[0].boundingBox["height"] * size;
     const sWidth = results.detections[0].boundingBox["width"] * size;
     const sx = results.detections[0].boundingBox["xCenter"] * size;
@@ -89,25 +89,31 @@ async function onResultsFace(results) {
          *  name: string,
          * }
          */
-        ShowToast('Notifications', 'Đang nhận diện gương mặt!');
-        let resp = await HandleRecognize();
+        try {
+          ShowToast('Notifications', 'Đang nhận diện gương mặt!');
+          let resp = await HandleRecognize();
+
+          let userList = resp.data.reduce((preList, u) => {
+            const name_id = u.subject.split('_')
+            return [
+              ...preList,
+              {
+                id: name_id[1],
+                name: name_id[0]
+              }
+            ]
+          }, [])
+          console.log('Prediction: ',userList)
+    
+          RenderUserPrediction(userList);
+          ShowModal(modalGreetingTrigger, 'Xin chào!');
+        } catch (error) {
+          ShowToast('Error', error.message, true, 'error') 
+          ActionWithDelay(() => {
+            ClearImageList()
+          }, 5000)   
+        }
         HideSpinner();
-
-        let userList = resp.reduce((preList, u) => {
-          const name_id = u.subject.split('_')
-          return [
-            ...preList,
-            {
-              id: name_id[1],
-              name: name_id[0]
-            }
-          ]
-        }, [])
-        
-        console.log('Prediction: ',userList)
-
-        RenderUserPrediction(userList);
-        ShowModal(modalGreetingTrigger, 'Xin chào!');
       }
     } else if(IN_PROCESS) {
       console.log('in process!')
@@ -131,8 +137,8 @@ const camera = new Camera(video1, {
   onFrame: async () => {
     await faceDetection.send({ image: video1 });
   },
-  width: 480,
-  height: 480,
+  width: out1.height,
+  height: out1.height,
 });
 camera.start();
 

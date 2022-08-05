@@ -1,3 +1,4 @@
+//#region google service
 async function UploadImageToGGDrive(file, filename) {
   // get parent folder id from localstorage
   const parentFolder = localStorage.getItem("parent_folder");
@@ -79,6 +80,7 @@ async function FindParentFolder() {
   console.log(files);
   localStorage.setItem("parent_folder", files[0].id);
 }
+//#endregion
 
 function dataURLtoFile(dataurl, filename) {
   var arr = dataurl.split(","),
@@ -93,13 +95,7 @@ function dataURLtoFile(dataurl, filename) {
   return new File([u8arr], filename, { type: mime });
 }
 
-async function AddSubjectExample(files, subjectName) {
-  let formData = new FormData();
-  
-  for(let i in files) {
-    formData.append('file', files[i])
-  }
-  
+async function TotalFacesOfSubject(subjectName) {
   let requestOptions = {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -107,28 +103,66 @@ async function AddSubjectExample(files, subjectName) {
     },
   };
 
-  const res = await axios.post(
+  const res = await axios.get(
     `${HOST_NAME}/api/v1/recognition/faces?subject=${subjectName}`,
-    formData,
     requestOptions
   );
-  
-  if(res.data.subject === subjectName) {
-    return {
-      status: 'success',
-      message: 'Add subject successfully!'
+
+  return Promise.resolve(res.data.faces.length);
+}
+
+async function AddSubjectExample(images, subjectName) {
+  let formData = new FormData();
+
+  for (const image of images) {
+    formData.append("file", image);
+  }
+
+  let requestOptions = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-api-key": "fef094a9-c36a-42d8-85f5-eb26f340d756",
+    },
+  };
+  const faces = await TotalFacesOfSubject(subjectName);
+  if (faces < 3) {
+    const res = await axios.post(
+      `${HOST_NAME}/api/v1/recognition/faces?subject=${subjectName}`,
+      formData,
+      requestOptions
+    );
+
+    if (res.data.subject === subjectName) {
+      if (faces > 0) {
+        return {
+          status: "success",
+          message: `a face added!, there are ${
+            faces + 1
+          } faces for subject: ${subjectName}`,
+        };
+      }
+      return {
+        status: "success",
+        message: "Add subject successfully!",
+      };
+    } else {
+      return {
+        status: "error",
+        message: res.data.message,
+      };
     }
-  }else {
+  } else {
     return {
-      status: 'error',
-      message: res.data.message
-    }
+      status: "success",
+      message: `subject has already had 3 examples!!!`,
+    };
   }
 }
 
 async function HandleRegister(userInfo, images) {
   let { id, name } = userInfo;
 
+  //#region For google drive
   // let formData = new FormData();
   // formData.append("id", id);
   // formData.append('username', name)
@@ -154,15 +188,17 @@ async function HandleRegister(userInfo, images) {
   // );
 
   // return upload_resp.data;
-  
-  const subjectName = name + '_' + id;
+  //#endregion
+
+  const subjectName = name + "_" + id;
   const res = await AddSubjectExample(images, subjectName);
-  console.log('Trainning: ',res)
-  return res
+  console.log("Trainning: ", res);
+  return res;
 }
 
 async function HandleRecognize() {
   let formdata = new FormData();
+
   formdata.append("file", IMAGES[0]);
 
   let requestOptions = {
@@ -172,12 +208,41 @@ async function HandleRecognize() {
     },
   };
 
-  const res = await axios.post(
-    `${HOST_NAME}/api/v1/recognition/recognize?prediction_count=3&limit=1`,
-    formdata,
-    requestOptions
-  );
-  return res.data.result[0].subjects;
+  try {
+    const predictionCount = 9;
+    const res = await axios.post(
+      `${HOST_NAME}/api/v1/recognition/recognize?prediction_count=${predictionCount}&limit=1`,
+      formdata,
+      requestOptions
+    );
+    const listRes = res.data.result[0].subjects;
+    let finalList = [];
+    for (const i of listRes) {
+      if (finalList.length < 3) {
+        let existed = false;
+        for (const s of finalList) {
+          if (i.subject === s.subject) {
+            existed = true;
+            break;
+          }
+        }
+        if (!existed) finalList.push(i);
+      } else break;
+    }
+
+    return Promise.resolve({
+      status: "OK",
+      data: finalList,
+    });
+  } catch (resErr) {
+    if (resErr.response.data.code === 28) {
+      console.log("error: ", resErr.response.data.message);
+      return Promise.reject({
+        status: "fail",
+        message: "Không phát hiện gương mặt, Hãy thử lại!",
+      });
+    }
+  }
 }
 
 function HandleCancelModalAndResetSession(e) {
@@ -221,11 +286,11 @@ async function HandleMakeNewFriendClick(event) {
   };
   nameInput.id = "new-user-name";
   nameInput.placeholder = "Họ và tên(VD: Ngô Đức Hoàng Hiệp)";
-  
+
   inputGroup.classList.add(...["mb-3"]);
-  nameLabel.className = idLabel.className = 'form-label';
-  nameInput.className = idInput.className = 'form-control';
-  nameInput.type = idInput.type = 'text';
+  nameLabel.className = idLabel.className = "form-label";
+  nameInput.className = idInput.className = "form-control";
+  nameInput.type = idInput.type = "text";
   inputGroup.appendChild(nameLabel);
   inputGroup.appendChild(nameInput);
   inputGroup.appendChild(idLabel);
@@ -256,10 +321,7 @@ async function HandleMakeNewFriendClick(event) {
       if (res) {
         HideSpinner();
         if (res.status === "success") {
-          ShowToast(
-            "Notification",
-            "Đã làm quen bạn mới, Hãy thử lại nhận diện!"
-          );
+          ShowToast("Notification", "Đã làm quen bạn mới, Hãy thử lại!");
         } else {
           ShowToast("Notification", "Có lỗi xảy ra!");
         }
@@ -358,7 +420,7 @@ function RenderUserPrediction(info) {
          * Handle correct recognition
          */
         CANCEL_GREETING_MODAL = false;
-        console.log('id:', e.target.id, 'is selected!')
+        console.log("id:", e.target.id, "is selected!");
         HandleGetUserInfoClick(e);
       });
 

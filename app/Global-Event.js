@@ -16,7 +16,7 @@ var NEW_ID = '';
 var NEW_NAME = ''
 var CANCEL_GREETING_MODAL = true;
 var CANCEL_INFO_MODAL = true;
-var HOST_NAME = 'https://d630-101-99-36-202.ap.ngrok.io'
+var HOST_NAME = 'http://localhost:8000'
 
 function ClearImageList(processing = false) {
   console.log('clear images')
@@ -45,14 +45,18 @@ function HideModal(modal) {
   modal.hide()
 }
 
+function ResetSessionInTime(sec = 5) {
+  ShowToast('Notification', `Chờ ${sec}s cho phiên tiếp theo!`, true)
+  ActionWithDelay(() => {
+    ClearImageList()
+  }, sec * 1000)
+}
+
 modalGreeting.addEventListener('hidden.bs.modal', (event) => {
   // console.log(CANCEL_GREETING_MODAL)
   MODAL_GREETING_BODY.innerHTML = '';
   if(CANCEL_GREETING_MODAL) {
-    ShowToast('Notification', 'Chờ 5s cho phiên tiếp theo!')
-    ActionWithDelay(() => {
-      ClearImageList()
-    }, 5000)
+    ResetSessionInTime(5);
   }
   CANCEL_GREETING_MODAL = true;
 })
@@ -60,10 +64,7 @@ modalGreeting.addEventListener('hidden.bs.modal', (event) => {
 modalInfo.addEventListener('hidden.bs.modal', (e) => {
   MODAL_INFO_BODY.innerHTML = '';
   if(CANCEL_INFO_MODAL) {
-    ShowToast('Notification', 'Chờ 5s cho phiên tiếp theo!')
-    ActionWithDelay(() => {
-      ClearImageList()
-    }, 5000)
+    ResetSessionInTime(5);
   }
   CANCEL_INFO_MODAL = true
 })
@@ -76,8 +77,15 @@ function HideSpinner() {
   spinnerLoading.style.display = "none";
 }
 
-function ShowToast(title, message) {
-  if(!toast.isShown()) {
+function ShowToast(title, message, important = false, type = 'info') {
+  const icon = document.getElementById('toast-icon')
+  if(type === 'info') {
+    icon.src = './info-icon.png'
+  }
+  if(type === 'error') {
+    icon.src = './error-icon.png'
+  }
+  if(!toast.isShown() || important) {
     let header = document.querySelector(".toast-title");
     header.textContent = title;
     let body = document.querySelector(".toast-body");

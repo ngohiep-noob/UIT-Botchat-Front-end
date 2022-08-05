@@ -1,0 +1,242 @@
+{
+    "code": 1,
+    "data": [
+        {
+            "thu": "2",
+            "online": "0",
+            "phonghoc": "E03.4",
+            "magv": [
+                {
+                    "hoten": "Nguyễn Văn Hợi",
+                    "email": "hoinv@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "0",
+            "sotc": "4",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "LT",
+            "malop": "MATH2144.M31.CTTT",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "1-4"
+        },
+        {
+            "thu": "2",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": [
+                {
+                    "hoten": "Phan Bách Thắng",
+                    "email": ""
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "0",
+            "sotc": "4",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "LT",
+            "malop": "PHYS1114.M31.CTTT",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "6-9"
+        },
+        {
+            "thu": "3",
+            "online": "0",
+            "phonghoc": "E03.4",
+            "magv": [
+                {
+                    "hoten": "Nguyễn Văn Hợi",
+                    "email": "hoinv@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "1",
+            "sotc": "0",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "TG",
+            "malop": "MATH2144.M31.CTTT.1",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "1-5"
+        },
+        {
+            "thu": "3",
+            "online": "0",
+            "phonghoc": "E03.4",
+            "magv": [
+                {
+                    "hoten": "Nguyễn Văn Hợi",
+                    "email": "hoinv@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "0",
+            "sotc": "4",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "LT",
+            "malop": "MATH2144.M31.CTTT",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "6-9"
+        },
+        {
+            "thu": "4",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": [
+                {
+                    "hoten": "Lê Nguyễn Bảo Thư",
+                    "email": "thulnb@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "1",
+            "sotc": "0",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "TG",
+            "malop": "PHYS1114.M31.CTTT.1",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "1-5"
+        },
+        {
+            "thu": "4",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": [
+                {
+                    "hoten": "Phan Bách Thắng",
+                    "email": ""
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "0",
+            "sotc": "4",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "LT",
+            "malop": "PHYS1114.M31.CTTT",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "6-9"
+        },
+        {
+            "thu": "5",
+            "online": "0",
+            "phonghoc": "E03.4",
+            "magv": [
+                {
+                    "hoten": "Nguyễn Văn Hợi",
+                    "email": "hoinv@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "0",
+            "sotc": "4",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "LT",
+            "malop": "MATH2144.M31.CTTT",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "1-4"
+        },
+        {
+            "thu": "5",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": [
+                {
+                    "hoten": "Nguyễn Văn Hợi",
+                    "email": "hoinv@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "1",
+            "sotc": "0",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "TG",
+            "malop": "MATH2144.M31.CTTT.1",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "6-10"
+        },
+        {
+            "thu": "6",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": [
+                {
+                    "hoten": "Lê Nguyễn Bảo Thư",
+                    "email": "thulnb@uit.edu.vn"
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "1",
+            "sotc": "0",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "TG",
+            "malop": "PHYS1114.M31.CTTT.1",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "1-5"
+        },
+        {
+            "thu": "6",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": [
+                {
+                    "hoten": "Phan Bách Thắng",
+                    "email": ""
+                }
+            ],
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "0",
+            "sotc": "4",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "LT",
+            "malop": "PHYS1114.M31.CTTT",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "6-9"
+        },
+        {
+            "thu": "7",
+            "online": "0",
+            "phonghoc": "E03.2",
+            "magv": null,
+            "ht2_lichgapsv": null,
+            "khoaql": "HTTT",
+            "thuchanh": "1",
+            "sotc": "0",
+            "dadk": "37",
+            "ngonngu": "EN",
+            "hinhthucgd": "TG",
+            "malop": "PHYS1114.M31.CTTT.1",
+            "hocky": "3",
+            "namhoc": "2021",
+            "tiet": "1-4"
+        }
+    ]
+}

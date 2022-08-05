@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
+      id="toggle-modal"
+    >
+      Launch demo modal
+    </button>
+
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col" class="text-center table-light">#</th>
+                  <th scope="col" class="text-center table-info">Thứ 2</th>
+                  <th scope="col" class="text-center table-info">Thứ 3</th>
+                  <th scope="col" class="text-center table-info">Thứ 4</th>
+                  <th scope="col" class="text-center table-info">Thứ 5</th>
+                  <th scope="col" class="text-center table-info">Thứ 6</th>
+                  <th scope="col" class="text-center table-info">Thứ 7</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-body">
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 1<br />(7:30 - 8:15)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 2<br />(8:15 - 9:00)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 3<br />(9:00 - 9:45)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 4<br />(10:00 - 10:45)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 5<br />(10:45 - 11:30)
+                  </th>
+                </tr>
+                <tr>
+                  <th></th>
+                </tr>
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 6<br />(13:00 - 13:45)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 7<br />(13:45 - 14:30)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 8<br />(14:30-15:15)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 9<br />(15:30-16:15)
+                  </th>
+                </tr>
+
+                <tr class="tiethoc">
+                  <th scope="row" class="text-center table-info">
+                    Tiết 10<br />(16:15-17:00)
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+<script src="script.js">
+  
+</script>
+</html>
