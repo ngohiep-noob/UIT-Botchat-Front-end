@@ -1,4 +1,4 @@
-# Hướng dẫn cài đặt Compreface Service
+# Hướng dẫn cài đặt Compreface Service - Backend.
 
 ### Requirements
 
@@ -22,7 +22,7 @@
 5. Mở cmd ngay tại folder vừa giải nén, chạy câu lệnh: `docker-compose up -d` (chạy khá lâu và nặng :>)
 8. Mở http://localhost:8000/login để kiểm tra service đã chạy chưa.
 
-# Hướng dẫn cài đặt Website 
+# Hướng dẫn cài đặt Website  - Frontend.
 
 ### Requirements
 
