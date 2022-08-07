@@ -249,7 +249,7 @@ function RenderSchedule(schedule) {
       for (const lesson of data) {
         // every lesson in a day
         const { tiet, online, phonghoc, dadk, ngonngu, malop} = lesson;
-        
+        const tenmh = lessonCode[malop.split('.')[0]];
         const tietBD = Number(tiet.split("-")[0]) - 1,
           tietKT = Number(tiet.split("-")[1]) - 1;
 
@@ -259,6 +259,7 @@ function RenderSchedule(schedule) {
         beginCell.setAttribute("rowspan", tietKT - tietBD + 1);
         [
             newElement('h6', `${malop} - ${ngonngu}`),
+            newElement('p', `${tenmh}`),
             newElement('p', `Phòng học: ${phonghoc}`),
             newElement('p', `Sỉ số: ${dadk}`),
             newElement('p', `Hình thức: ${online === '1' ? 'online' : 'offline'}`),
@@ -299,6 +300,7 @@ async function GetTimeTable(id) {
       6: [],
       7: [],
     };
+    console.log(data)
     data.forEach((e) => schedule[e.thu].push(e));
     console.log('schedule', schedule)
     RenderSchedule(schedule);
