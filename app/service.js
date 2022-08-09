@@ -75,6 +75,9 @@ async function AddSubjectExample(images, subjectName) {
   }
 }
 
+/**
+ * add new face to trainning
+ */
 async function HandleRegister(userInfo, images) {
   let { id, name } = userInfo;
   const subjectName = name + "_" + id;
@@ -83,6 +86,9 @@ async function HandleRegister(userInfo, images) {
   return res;
 }
 
+/**
+ * Call api to recognize
+ */
 async function HandleRecognize() {
   let formdata = new FormData();
 
@@ -143,11 +149,12 @@ function HandleCancelModalAndResetSession(e) {
   }, 5000);
 }
 
+/**
+ * Unknown user
+ */
 async function HandleMakeNewFriendClick(event) {
   event.preventDefault();
-  /**
-   * InnerHTML of modal
-   */
+  
   let desc = document.createElement("h3");
   let inputGroup = document.createElement("div");
 
@@ -236,6 +243,9 @@ function AddEmptyCellInCol(tabRows, beg, end) {
   }
 }
 
+/**
+ * Render time schedule into empty table
+ */
 function RenderSchedule(schedule) {
   let tabRows = document.querySelectorAll(".tiethoc");
   for (const day in schedule) {
@@ -273,8 +283,8 @@ function RenderSchedule(schedule) {
   }
 }
 
+// call api to get table time
 async function GetTimeTable(id) {
-  // call api to get table time
   const body = {
     id, 
     hocky: 3,
@@ -291,7 +301,7 @@ async function GetTimeTable(id) {
   .then(res => res.json())
   .then(res => {
     const data = res.data;
-    console.log(res)
+    console.log('res:', data)
     const schedule = {
       2: [],
       3: [],
@@ -316,15 +326,18 @@ async function GetTimeTable(id) {
 
 }
 
+/**
+ * Render user detail information
+ */
 async function HandleGetUserInfoClick(event) {
   event.preventDefault();
   id = event.target.id;
-  /**
-   * Call api to get and render user detail information
-   */
   GetTimeTable(id);
 }
 
+/**
+ * User predictions
+ */
 function RenderUserPrediction(info) {
   let modalBody = document.querySelector("#greeting-modal-body");
   if (modalBody.innerHTML === "") {

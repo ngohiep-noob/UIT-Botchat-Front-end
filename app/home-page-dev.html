@@ -36,6 +36,10 @@
       crossorigin="anonymous"
     ></script>
     <script
+      src="./mediapipe/hand_detection.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.js"
       integrity="sha512-rozBdNtS7jw9BlC76YF1FQGjz17qQ0J/Vu9ZCFIW374sEy4EZRbRcUZa2RU/MZ90X2mnLU56F75VfdToGV0RiA=="
       crossorigin="anonymous"
@@ -44,7 +48,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="./service.js"></script>
     <title>UITA - Verify Student</title>
-    <link rel="icon" type="image/x-icon" href="./favicon.png">
+    <link rel="icon" type="image/x-icon" href="./favicon.png" />
   </head>
 
   <body>
@@ -55,7 +59,10 @@
           <article class="text-center display-4">
             <p class="panel-heading">UIT Assistant</p>
             <div class="panel-block">
-              <video class="input_video1" style="height: 550px; width: 550px;"></video>
+              <video
+                id="input-video"
+                style="height: 550px; width: 550px"
+              ></video>
             </div>
           </article>
         </div>
@@ -65,7 +72,7 @@
           <article class="panel is-info">
             <p class="panel-heading">Face Detection</p>
             <div class="panel-block">
-              <canvas class="output1" width="480px" height="480px"></canvas>
+              <canvas id="output-video" width="480px" height="480px"></canvas>
             </div>
           </article>
         </div>
@@ -83,12 +90,7 @@
     </div>
     <div style="display: none" class="control1"></div>
 
-    <div
-      class="modal fade"
-      id="modal-panel"
-      tabindex="-1"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="modal-panel" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
@@ -115,12 +117,7 @@
       </div>
     </div>
 
-    <div
-      class="modal fade"
-      id="info-modal"
-      tabindex="-1"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="info-modal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
@@ -132,7 +129,7 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body" id='info-modal-body'></div>
+          <div class="modal-body" id="info-modal-body"></div>
           <div class="modal-footer">
             <button
               type="button"
@@ -156,7 +153,12 @@
         aria-atomic="true"
       >
         <div class="toast-header">
-          <img src="./info-icon.png" class="rounded me-2" alt="..." id="toast-icon"/>
+          <img
+            src="./info-icon.png"
+            class="rounded me-2"
+            alt="..."
+            id="toast-icon"
+          />
           <strong class="me-auto toast-title">Bootstrap</strong>
           <small>Just now</small>
           <button
@@ -181,7 +183,9 @@
       <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
           <div class="modal-header">
-            <p class="modal-title display-5" id="exampleModalLabel">Thời khóa biểu</p>
+            <p class="modal-title display-5" id="exampleModalLabel">
+              Thời khóa biểu
+            </p>
             <button
               type="button"
               class="btn-close"
@@ -280,7 +284,7 @@
         </div>
       </div>
     </div>
-    
+
     <script src="lessonCode.js"></script>
     <script src="./Global-Event.js"></script>
     <script type="text/javascript" src="main.js"></script>

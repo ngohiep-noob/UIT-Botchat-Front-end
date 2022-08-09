@@ -36,6 +36,10 @@
       crossorigin="anonymous"
     ></script>
     <script
+      src="./mediapipe/hand_dectection.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.js"
       integrity="sha512-rozBdNtS7jw9BlC76YF1FQGjz17qQ0J/Vu9ZCFIW374sEy4EZRbRcUZa2RU/MZ90X2mnLU56F75VfdToGV0RiA=="
       crossorigin="anonymous"
@@ -55,7 +59,7 @@
           <article class="text-center display-4">
             <p class="panel-heading">UIT Assistant</p>
             <div class="panel-block">
-              <video class="input_video1" style="height: 600px; width: 600px;"></video>
+              <video id="input_video" style="height: 600px; width: 600px;"></video>
             </div>
           </article>
         </div>
@@ -65,7 +69,7 @@
           <article class="panel is-info">
             <p class="panel-heading">Face Detection</p>
             <div class="panel-block">
-              <canvas class="output1" width="480px" height="480px"></canvas>
+              <canvas id="output_video" width="480px" height="480px"></canvas>
             </div>
           </article>
         </div>

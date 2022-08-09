@@ -1,9 +1,9 @@
-const video1 = document.getElementsByClassName("input_video1")[0];
-const out1 = document.getElementsByClassName("output1")[0];
+const inputVid = document.getElementById("input-video");
+const outputVid = document.getElementById("output-video");
 const img = document.getElementById("img");
 const controlsElement1 = document.getElementsByClassName("control1")[0];
-const canvasOut1 = out1.getContext("2d");
-const canvasImgCrop = img.getContext("2d");
+const outputCtx = outputVid.getContext("2d");
+const outputCrop = img.getContext("2d");
 const fpsControl = new FPS();
 const stopBtn = document.getElementById("stop-btn");
 const mainBox = document.getElementById("main-box");
@@ -16,13 +16,7 @@ const mainBox = document.getElementById("main-box");
  *    -> upload to gg drive and call api register
  */
 
-function stopDetect() {
-  faceDetection.onResults(() => {
-    //console.log("finished face detection!");
-  });
-}
-
-function runDetect() {
+function runFaceDetect() {
   faceDetection.onResults(onResultsFace)
 }
 
@@ -30,30 +24,34 @@ let state = 1; // 0 - waiting, 1 - ready
 
 async function onResultsFace(results) {
   fpsControl.tick();
-  canvasOut1.save();
-  canvasOut1.clearRect(0, 0, out1.width, out1.height);
-  canvasOut1.drawImage(results.image, 0, 0, out1.width, out1.height);
+  outputCtx.save();
+  outputCtx.translate(outputVid.width, 0);
+  outputCtx.scale(-1, 1);
+  outputCtx.clearRect(0, 0, outputVid.width, outputVid.height);
+  outputCtx.drawImage(results.image, 0, 0, outputVid.width, outputVid.height);
 
+  // console.log('face ',results.detections[0])
   if (results.detections.length > 0) {
-    const size = out1.height;
+    const size = outputVid.height;
     const sHeight = results.detections[0].boundingBox["height"] * size;
     const sWidth = results.detections[0].boundingBox["width"] * size;
     const sx = results.detections[0].boundingBox["xCenter"] * size;
     const sy = results.detections[0].boundingBox["yCenter"] * size;
     // console.log('height: ' + sHeight,'width: ' +  sWidth, 'sx: ' + sx, 'sy: ' + sy)
 
-    drawRectangle(canvasOut1, results.detections[0].boundingBox, {
+    drawRectangle(outputCtx, results.detections[0].boundingBox, {
       color: "green",
       lineWidth: 4,
       fillColor: "#00000000",
     });
 
-    drawLandmarks(canvasOut1, results.detections[0].landmarks, {
+    drawLandmarks(outputCtx, results.detections[0].landmarks, {
       color: "white",
       radius: 5,
     });
+    
     /**
-     * user face need to be close and there aren't any process running
+     * main process
      */
     if(!IN_PROCESS && sHeight > 160 && sWidth > 160) {
       if(IMAGES.length < NUMBER_OF_IMAGES) {
@@ -61,7 +59,7 @@ async function onResultsFace(results) {
           state = 0;
           ShowSpinner();
           setTimeout(() => {
-            canvasImgCrop.drawImage(
+            outputCrop.drawImage(
               results.image,
               sx - sWidth / 2 - 30,
               sy - sHeight / 2 - 70,
@@ -80,7 +78,8 @@ async function onResultsFace(results) {
           // HideSpinner();
         }
       } else {
-        IN_PROCESS = true;
+        try {
+          IN_PROCESS = true;
         
         /**
          * Call api to verify
@@ -89,7 +88,6 @@ async function onResultsFace(results) {
          *  name: string,
          * }
          */
-        try {
           ShowToast('Notifications', 'Đang nhận diện gương mặt!');
           let resp = await HandleRecognize();
 
@@ -122,7 +120,21 @@ async function onResultsFace(results) {
       ShowToast('Notification', 'Hãy lại gần camera!')
     }
   }
-  canvasOut1.restore();
+  outputCtx.restore();
+}
+
+async function onResultsHand(results) {
+  if (results.multiHandLandmarks) {
+    console.log('hand ',results.multiHandLandmarks)
+    
+    for (const i in results.multiHandLandmarks) {
+      const coords = results.multiHandLandmarks[i];
+      // drawConnectors(outputCtx, i, HAND_CONNECTIONS,
+      //                {color: '#00FF00', lineWidth: 5});
+      outputCtx.fillText(i, coords.x, coords.y)
+      drawLandmarks(outputCtx, coords, {color: '#FF0000', lineWidth: 2});
+    }
+  }
 }
 
 const faceDetection = new FaceDetection({
@@ -131,16 +143,37 @@ const faceDetection = new FaceDetection({
   },
 });
 
-runDetect();
+runFaceDetect();
 
-const camera = new Camera(video1, {
+const FaceCamera = new Camera(inputVid, {
   onFrame: async () => {
-    await faceDetection.send({ image: video1 });
+    await faceDetection.send({ image: inputVid });
   },
-  width: out1.height,
-  height: out1.height,
+  width: outputVid.height,
+  height: outputVid.height,
 });
-camera.start();
+FaceCamera.start();
+
+const handDetection = new Hands({locateFile: (file) => {
+  return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+}});
+
+handDetection.setOptions({
+  maxNumHands: 2,
+  modelComplexity: 1,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
+});
+handDetection.onResults(onResultsHand);
+
+const HandCamera = new Camera(inputVid, {
+  onFrame: async () => {
+    await handDetection.send({image: inputVid});
+  },
+  width: outputVid.height,
+  height: outputVid.height,
+});
+HandCamera.start();
 
 new ControlPanel(controlsElement1, {
   selfieMode: true,
@@ -158,12 +191,7 @@ new ControlPanel(controlsElement1, {
     }),
   ])
   .on((options) => {
-    video1.classList.toggle("selfie", options.selfieMode);
+    inputVid.classList.toggle("selfie", options.selfieMode);
     faceDetection.setOptions(options);
   });
-
-
-
-
-
 
