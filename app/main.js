@@ -22,6 +22,7 @@ function runFaceDetect() {
 
 let state = 1; // 0 - waiting, 1 - ready
 
+
 async function onResultsFace(results) {
   fpsControl.tick();
   outputCtx.save();
@@ -123,7 +124,66 @@ async function onResultsFace(results) {
   outputCtx.restore();
 }
 
+// fingerID
+const tipIds = [4, 8, 12, 16, 20];
+
 async function onResultsHand(results) {
+  // CODE FROM HERE
+  let lmList = []
+  let w =  canvasElement.width;
+  let h = canvasElement.height;
+  
+  if (results.multiHandLandmarks) {
+       
+        for (const landmarks of results.multiHandLandmarks) {
+            let index = 0
+            for (const landmark of landmarks){
+                //console.log(landmark);
+                let cx = Math.floor(landmark["x"] * w)
+                let cy = Math.floor(landmark["y"] * h)
+                lmList.push([index, cx,cy ]);
+                index += 1;
+            }
+        }
+    }
+
+   const fingers = []
+    
+   if (lmList)
+    {
+        //thumb
+        if (lmList[tipIds[0]]) {
+
+            if (lmList[tipIds[0]].at(1) > lmList[tipIds[0] - 1].at(1)) {
+                fingers.push(1);
+            }
+            else {
+                fingers.push(0);
+            }
+        }
+
+        //the other fingers
+        for (let id = 1; id <= 4; id++) {
+
+            if (lmList[tipIds[id]]) {
+                if (lmList[tipIds[id]].at(2) < lmList[tipIds[id] - 2].at(2)) {
+                    fingers.push(1);
+                }
+                else {
+                    fingers.push(0);
+                }
+            }
+                
+        }
+
+    }
+
+    //  Right-Hand: [1,1,1,1,1] ~ all fingers are up otherwise off
+
+    console.log("Fingers: ", fingers)
+  
+  //END CODE
+  
   if (results.multiHandLandmarks) {
     console.log('hand ',results.multiHandLandmarks)
     
